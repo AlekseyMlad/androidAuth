@@ -14,15 +14,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.di.FirebaseMessagingService
+import ru.netology.nmedia.di.GoogleApiAvailabilityService
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
+    @Inject
+    lateinit var googleApiAvailabilityService: GoogleApiAvailabilityService
+
+    @Inject
+    lateinit var firebaseMessagingService: FirebaseMessagingService
+
     private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +77,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
             println(token)
         }
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+        firebaseMessagingService.getToken().addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 println("some stuff happened: ${task.exception}")
                 return@addOnCompleteListener
@@ -98,13 +111,13 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
                     R.id.signup -> {
                         // TODO: just hardcode it, implementation must be in homework
-                        AppAuth.getInstance().setAuth(5, "x-token")
+                        appAuth.setAuth(5, "x-token")
                         true
                     }
 
                     R.id.signout -> {
                         // TODO: just hardcode it, implementation must be in homework
-                        AppAuth.getInstance().removeAuth()
+                        appAuth.removeAuth()
                         true
                     }
 
@@ -128,7 +141,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     }
 
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+        with(googleApiAvailabilityService) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -141,7 +154,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                 .show()
         }
 
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseMessagingService.getToken().addOnSuccessListener {
             println(it)
         }
     }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import ru.netology.nmedia.BuildConfig.BASE_URL
 import ru.netology.nmedia.databinding.AttachmentImageBinding
 
 class AttachmentImageFragment : Fragment() {
@@ -28,7 +29,7 @@ class AttachmentImageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val imageUrl = arguments?.getString("imageUrl")
-        val fullImageUrl = "http://10.0.2.2:9999/media/$imageUrl"
+        val fullImageUrl = "$BASE_URL/media/$imageUrl"
 
         Glide.with(this)
             .load(fullImageUrl)

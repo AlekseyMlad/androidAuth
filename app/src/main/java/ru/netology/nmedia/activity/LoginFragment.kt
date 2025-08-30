@@ -8,12 +8,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentLoginBinding
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 import kotlin.getValue
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
+    @Inject
+    lateinit var appAuth: AppAuth
     private val viewModel: AuthViewModel by viewModels()
 
     private lateinit var binding: FragmentLoginBinding
